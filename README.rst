@@ -8,8 +8,15 @@ Fast delta encoding in python using xdelta3.
 Requirements
 ------------
 
-* **Python 3.6**
-* **linux**
+* **Python 3.5 or 3.6** - it's 2017: you should be using python 3.6 by now anyway.
+* **linux** - compilation only tested on ubuntu, might work on other platform.
+
+Installation
+------------
+
+.. code:: shell
+
+    pip install xdelta3
 
 Usage
 -----
@@ -17,8 +24,8 @@ Usage
 .. code:: python
 
     import xdelta3
-    value_one = b'this is a wonderful string to demonstrate with. Much of the two strings is duplicated.'
-    value_two = b'this is a different string to demonstrate with. Much of the two strings is duplicated.'
+    value_one = b'wonderful string to demonstrate xdelta3, much of these two strings is the same.'
+    value_two = b'different string to demonstrate xdelta3, much of these two strings is the same.'
     delta = xdelta3.encode(value_one, value_two)
 
     print(f'New string length: {len(value_two)}, delta length: {len(delta)}')

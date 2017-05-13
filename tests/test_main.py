@@ -21,3 +21,12 @@ def test_no_delta():
     with pytest.raises(xdelta3.NoDeltaFound) as exc_info:
         xdelta3.encode(b'hello', b'goodbye')
     assert exc_info.value.args[0] == 'No delta found shorter than the input value'
+
+
+def test_readme():
+    value_one = b'wonderful string to demonstrate xdelta3, much of these two strings is the same.'
+    value_two = b'different string to demonstrate xdelta3, much of these two strings is the same.'
+    delta = xdelta3.encode(value_one, value_two)
+
+    value_two_rebuilt = xdelta3.decode(value_one, delta)
+    assert value_two_rebuilt == value_two

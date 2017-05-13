@@ -6,6 +6,7 @@ services:
 - postgresql
 
 python:
+- '3.5'
 - '3.6'
 - 'nightly'  # currently 3.7
 
@@ -25,7 +26,6 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - gcc-5
-    - patchelf
 
 install:
 - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
@@ -38,7 +38,8 @@ script:
 - make lint
 - make test
 - ./tests/check_tag.py
-#- docker run --rm -v `pwd`:/io $DOCKER_IMAGE /io/tests/build-wheels.sh TODO currently broken as gcc-5 isn't available on centos 5
+# TODO manylinux is currently broken as gcc-5 isn't available on centos 5
+#- docker run --rm -v `pwd`:/io $DOCKER_IMAGE /io/tests/build-wheels.sh
 
 after_success:
 - ls -lha
