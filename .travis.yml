@@ -13,9 +13,18 @@ matrix:
   allow_failures:
   - python: 'nightly'
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-5
+
 install:
-- make install
+- sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+- gcc -v
 - pip freeze
+- make install
 
 script:
 - make lint
