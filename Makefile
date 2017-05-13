@@ -36,10 +36,10 @@ clean:
 	rm -f `find . -type f -name '*.py[co]' `
 	rm -f `find . -type f -name '*~' `
 	rm -f `find . -type f -name '.*~' `
-	rm -rf .cache
 	rm -rf htmlcov
 	rm -rf *.egg-info
 	rm -rf *.so
+	rm -rf dist
 	rm -f .coverage
 	rm -f .coverage.*
 	rm -rf build

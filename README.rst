@@ -29,11 +29,11 @@ Usage
 How fast?
 ---------
 
-*xdelta3-python* is a thing wrapper around `xdelta 3.1.1 <https://github.com/jmacd/xdelta/>`_
-which is a highly optimised c library for delta encoding calculation and compression.
-
+*xdelta3-python* is a thin wrapper around `xdelta 3.1.1 <https://github.com/jmacd/xdelta/>`_
+which is a highly optimised c library for delta calculation and compression.
 It can encode a delta and decode it again for 5 small changes in a 5.4M character string
-(the complete works of shakespeare) in around 30ms. Boom. See ``performance.py``.
+(the complete works of shakespeare) in around 30ms. Boom.
+See `performance.py <https://github.com/samuelcolvin/xdelta3-python/blob/master/performance.py>`_.
 
 .. |BuildStatus| image:: https://travis-ci.org/samuelcolvin/xdelta3-python.svg?branch=master
    :target: https://travis-ci.org/samuelcolvin/xdelta3-python

@@ -1,15 +1,15 @@
 """
-To run
-    curl https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt > shakespeare.txt
-    cp shakespeare.txt shakespeare_changed.txt
-    vim shakespeare_changed.txt (and make some changes to shakespeare_changed.txt)
-    python performance.py
+To run:
 
+curl https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt > shakespeare.txt
+cp shakespeare.txt shakespeare_changed.txt
+vim shakespeare_changed.txt (and make some changes to shakespeare_changed.txt)
+python performance.py
 """
 
 from pathlib import Path
-from time import time
 from statistics import mean, stdev
+from time import time
 import xdelta3
 
 
