@@ -4,6 +4,9 @@
 #include "xdelta3.c"
 #include <Python.h>
 
+static PyObject *NoDeltaFound;
+static PyObject *XDeltaError;
+
 static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 {
   uint8_t *input_bytes = NULL, *source_bytes = NULL, *output_buf = NULL;
@@ -15,6 +18,7 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 
   source_size = (size_t)source_len;
   input_size = (size_t)input_len;
+
 
   if (action == 0) {
     // if the output would be longer than the input itself, there's no point using delta encoding
@@ -37,9 +41,17 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
   }
 
   if(result == ENOSPC) {
-    PyErr_SetString(PyExc_RuntimeError, "ENOSPC");
+    if (action == 0) {
+      // all is well, just not efficient delta could be found
+      PyErr_SetString(NoDeltaFound, "No delta found shorter than the input value");
+    } else {
+      PyErr_SetString(XDeltaError, "Output of decoding delta longer than expected");
+    }
   } else {
-    PyErr_SetString(PyExc_RuntimeError, xd3_strerror(result));
+    char exc_str[80];
+    sprintf(exc_str, "Error occur executing xdelta3: %s", xd3_strerror(result));
+    PyErr_SetString(XDeltaError, exc_str);
+
   }
   main_free(output_buf);
   return NULL;
@@ -59,5 +71,18 @@ static struct PyModuleDef xdelta3_module = {
 };
 
 PyMODINIT_FUNC PyInit__xdelta3(void) {
-  return PyModule_Create(&xdelta3_module);
+    PyObject *m;
+
+    m = PyModule_Create(&xdelta3_module);
+    if (m == NULL)
+        return NULL;
+
+    XDeltaError = PyErr_NewException("xdelta3.XDeltaError", NULL, NULL);
+    Py_INCREF(XDeltaError);
+    PyModule_AddObject(m, "XDeltaError", XDeltaError);
+
+    NoDeltaFound = PyErr_NewException("xdelta3.NoDeltaFound", NULL, NULL);
+    Py_INCREF(NoDeltaFound);
+    PyModule_AddObject(m, "NoDeltaFound", NoDeltaFound);
+    return m;
 }

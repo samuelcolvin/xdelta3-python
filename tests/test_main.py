@@ -1,8 +1,23 @@
+import pytest
+
 import xdelta3
+
+value_one = b'this is a short string to test with. It is suitable for delta encoding.'
+value_two = b'this is a different short string to test with. It is suitable for delta encoding.'
+
+
+def test_encode_decode():
+    delta = xdelta3.encode(value_one, value_two)
+    value_two2 = xdelta3.decode(value_one, delta)
+    assert value_two == value_two2
 
 
 def test_encode():
-    v1 = b'this is a short string to test with. It is suitable for delta encoding.'
-    v2 = b'this is a different short string to test with. It is suitable for delta encoding.'
-    result = xdelta3.encode(v1, v2)
+    result = xdelta3.encode(value_one, value_two)
     assert result == b'\xd6\xc3\xc4\x00\x00\x01G\x00\x14Q\x00\t\x04\x02different\x1a\n\x13>\x00\t'
+
+
+def test_no_delta():
+    with pytest.raises(xdelta3.NoDeltaFound) as exc_info:
+        xdelta3.encode(b'hello', b'goodbye')
+    assert exc_info.value.args[0] == 'No delta found shorter than the input value'

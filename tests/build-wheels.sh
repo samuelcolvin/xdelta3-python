@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -x
 
+yum install -y gcc
+gcc -v
+
 # Compile wheels
 /opt/python/cp36-cp36m/bin/pip install -r /io/tests/requirements.txt
 /opt/python/cp36-cp36m/bin/pip wheel /io/ -w wheelhouse/

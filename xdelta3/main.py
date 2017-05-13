@@ -1,8 +1,11 @@
 from enum import IntEnum
 
 import _xdelta3
+from _xdelta3 import NoDeltaFound, XDeltaError  # noqa
 
 __all__ = [
+    'NoDeltaFound',
+    'XDeltaError',
     'Flags',
     'encode',
     'decode',
@@ -67,11 +70,6 @@ class Flags(IntEnum):
     COMPLEVEL_9 = 9 << COMPLEVEL_SHIFT
 
 
-class Actions(IntEnum):
-    encode = 0
-    decode = 1
-
-
 def encode(original: bytes, new_value: bytes, flags: int=Flags.COMPLEVEL_9) -> bytes:
     """
     Encode a delta of new_value from original.
@@ -84,7 +82,7 @@ def encode(original: bytes, new_value: bytes, flags: int=Flags.COMPLEVEL_9) -> b
     :param flags: see Flags above
     :return: delta byte string
     """
-    return _xdelta3.execute(new_value, original, flags, Actions.encode)
+    return _xdelta3.execute(new_value, original, flags, 0)
 
 
 def decode(original: bytes, delta: bytes, flags: int=Flags.COMPLEVEL_9):
@@ -99,4 +97,4 @@ def decode(original: bytes, delta: bytes, flags: int=Flags.COMPLEVEL_9):
     :param flags: see Flags above
     :return: new byte string from applying delta to original
     """
-    return _xdelta3.execute(delta, original, flags, Actions.decode)
+    return _xdelta3.execute(delta, original, flags, 1)
