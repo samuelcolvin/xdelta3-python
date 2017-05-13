@@ -9,4 +9,4 @@ test.py
 .coverage
 htmlcov/
 *.so
-*.txt
+/*.txt
