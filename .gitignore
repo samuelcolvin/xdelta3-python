@@ -1,0 +1,11 @@
+.idea/
+env/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.cache/
+test.py
+.coverage
+htmlcov/
+*.so
