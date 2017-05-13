@@ -4,10 +4,7 @@
 #include "xdelta3.c"
 #include <Python.h>
 
-static PyObject *XDeltaDeltaTooBig;
-static PyObject *XDeltaError;
-
-static PyObject * xdelta3_encode_decode(PyObject *self, PyObject *args)
+static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 {
     uint8_t *input_bytes = NULL, *source_bytes = NULL, *output_buf = NULL;
     int input_len, source_len, flags, action, result;
@@ -21,31 +18,33 @@ static PyObject * xdelta3_encode_decode(PyObject *self, PyObject *args)
 
 
     if (action == 0) {
+        // if the output would be longer than the input itself, there's no point using delta encoding
         output_alloc = input_size;
         output_buf = main_malloc(output_alloc);
         result = xd3_encode_memory(input_bytes, input_size, source_bytes, source_size,
                 output_buf, &output_size, output_alloc, flags);
     } else {
-        output_alloc = input_size  * 100; // TODO
+        // output shouldn't be bigger than the original plus the delta, but give a little leeway
+        output_alloc = input_size + source_size * 11 / 10;
         output_buf = main_malloc(output_alloc);
         result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
                 output_buf, &output_size, output_alloc, flags);
     }
 
-    if (result != 0) {
-        if(result == ENOSPC) {
-            PyErr_SetString(XDeltaDeltaTooBig, "delta too big: ENOSPC");
-        } else {
-            PyErr_SetString(XDeltaError, xd3_strerror(result));
-        }
-        return NULL;
+    if (result == 0) {
+        return Py_BuildValue("y#", output_buf, output_size);
     }
 
-    return Py_BuildValue("y#", output_buf, output_size);
+    if(result == ENOSPC) {
+        PyErr_SetString(PyExc_RuntimeError, "ENOSPC");
+    } else {
+        PyErr_SetString(PyExc_RuntimeError, xd3_strerror(result));
+    }
+    return NULL;
 }
 
 static PyMethodDef xdelta3_methods[] = {
-    {"encode_decode",  xdelta3_encode_decode, METH_VARARGS, "xdelta3 encode or decode"},
+    {"execute",  xdelta3_execute, METH_VARARGS, "xdelta3 encode or decode"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -58,18 +57,5 @@ static struct PyModuleDef xdelta3_module = {
 };
 
 PyMODINIT_FUNC PyInit__xdelta3(void) {
-    PyObject *m;
-
-    m = PyModule_Create(&xdelta3_module);
-    if (m == NULL)
-        return NULL;
-
-    XDeltaError = PyErr_NewException("xdelta3.XDeltaError", NULL, NULL);
-    Py_INCREF(XDeltaError);
-    PyModule_AddObject(m, "error", XDeltaError);
-
-    XDeltaDeltaTooBig = PyErr_NewException("xdelta3.XDeltaDeltaTooBig", NULL, NULL);
-    Py_INCREF(XDeltaDeltaTooBig);
-    PyModule_AddObject(m, "error", XDeltaDeltaTooBig);
-    return m;
+    return PyModule_Create(&xdelta3_module);
 }

@@ -72,9 +72,31 @@ class Actions(IntEnum):
     decode = 1
 
 
-def encode(input: bytes, source: bytes, flags: int=Flags.COMPLEVEL_9):
-    return _xdelta3.encode_decode(input, source, flags, Actions.encode)
+def encode(original: bytes, new_value: bytes, flags: int=Flags.COMPLEVEL_9) -> bytes:
+    """
+    Encode a delta of new_value from original.
+    
+    Note the main two arguments original (aka. source) and new_value (aka input) are reversed
+    here compared to xdelta3 methods as IMHO this makes more sense.
+
+    :param original: source byte string
+    :param new_value: new byte string differing partially from original
+    :param flags: 
+    :return: delta byte string
+    """
+    return _xdelta3.execute(new_value, original, flags, Actions.encode)
 
 
-def decode(input: bytes, source: bytes, flags: int=Flags.COMPLEVEL_9):
-    return _xdelta3.encode_decode(input, source, flags, Actions.decode)
+def decode(original: bytes, delta: bytes, flags: int=Flags.COMPLEVEL_9):
+    """
+    Decode a delta to calculate a new value from the original and a delta.
+    
+    Note the main two arguments original (aka. source) and delta (aka input) are reversed
+    here compared to xdelta3 methods as IMHO this makes more sense.
+    
+    :param original: source byte string
+    :param delta: delta defining changes the original string
+    :param flags: 
+    :return: new byte string from applying delta to original
+    """
+    return _xdelta3.execute(delta, original, flags, Actions.decode)
