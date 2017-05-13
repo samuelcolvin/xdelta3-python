@@ -4,58 +4,55 @@
 #include "xdelta3.c"
 #include <Python.h>
 
-static PyObject *XDeltaNotPossible;
+static PyObject *XDeltaDeltaTooBig;
 static PyObject *XDeltaError;
 
-static PyObject * xdelta3_encode(PyObject *self, PyObject *args)
+static PyObject * xdelta3_encode_decode(PyObject *self, PyObject *args)
 {
-    uint8_t *before_bytes = NULL, *after_bytes = NULL, *delta_buf = NULL;
-    int before_len, after_len;
-    size_t before_size, after_size, delta_alloc;
-    size_t delta_size;
+    uint8_t *input_bytes = NULL, *source_bytes = NULL, *output_buf = NULL;
+    int input_len, source_len, flags, action, result;
+    size_t input_size, source_size, output_alloc, output_size;
 
-    if (!PyArg_ParseTuple(args, "y#y#", &before_bytes, &before_len, &after_bytes, &after_len))
+    if (!PyArg_ParseTuple(args, "y#y#ii", &input_bytes, &input_len, &source_bytes, &source_len, &flags, &action))
         return NULL;
 
-    int flags = XD3_COMPLEVEL_9;
+    source_size = (size_t)source_len;
+    input_size = (size_t)input_len;
 
-    before_size = (size_t)before_len;
-    after_size = (size_t)after_len;
 
-    delta_alloc = after_size * 11 / 10;
-    delta_buf = main_malloc(delta_alloc);
+    if (action == 0) {
+        output_alloc = input_size;
+        output_buf = main_malloc(output_alloc);
+        result = xd3_encode_memory(input_bytes, input_size, source_bytes, source_size,
+                output_buf, &output_size, output_alloc, flags);
+    } else {
+        output_alloc = input_size  * 100; // TODO
+        output_buf = main_malloc(output_alloc);
+        result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
+                output_buf, &output_size, output_alloc, flags);
+    }
 
-//    fprintf(stderr, "before len: %d %d\n", before_len, (int)before_size);
-//    fprintf(stderr, "after len: %d %d\n", after_len, (int)after_size);
-//    fprintf(stderr, "delta_alloc: %d\n", (int)delta_alloc);
-
-    int ret = xd3_encode_memory(after_bytes, after_size, before_bytes, before_size,
-            delta_buf, &delta_size, delta_alloc, flags);
-
-    if (ret != 0) {
-        if(ret == 28) {
-            // seems to be a special case for "can't delta"
-            PyErr_SetString(XDeltaNotPossible, "no delta possible");
+    if (result != 0) {
+        if(result == ENOSPC) {
+            PyErr_SetString(XDeltaDeltaTooBig, "delta too big: ENOSPC");
         } else {
-            char exc_str[80];
-            sprintf(exc_str, "%d %s", ret, xd3_strerror(ret));
-            PyErr_SetString(XDeltaError, exc_str);
+            PyErr_SetString(XDeltaError, xd3_strerror(result));
         }
         return NULL;
     }
 
-    return Py_BuildValue("y", delta_buf);
+    return Py_BuildValue("y#", output_buf, output_size);
 }
 
 static PyMethodDef xdelta3_methods[] = {
-    {"encode",  xdelta3_encode, METH_VARARGS, "Execute a shell command."},
+    {"encode_decode",  xdelta3_encode_decode, METH_VARARGS, "xdelta3 encode or decode"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 static struct PyModuleDef xdelta3_module = {
    PyModuleDef_HEAD_INIT,
    "xdelta3",   /* name of module */
-   "this is xdelta3", /* module documentation, may be NULL */
+   "xdelta3", /* module documentation, may be NULL */
    -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
    xdelta3_methods
 };
@@ -71,8 +68,8 @@ PyMODINIT_FUNC PyInit__xdelta3(void) {
     Py_INCREF(XDeltaError);
     PyModule_AddObject(m, "error", XDeltaError);
 
-    XDeltaNotPossible = PyErr_NewException("xdelta3.XDeltaNotPossible", NULL, NULL);
-    Py_INCREF(XDeltaNotPossible);
-    PyModule_AddObject(m, "error", XDeltaNotPossible);
+    XDeltaDeltaTooBig = PyErr_NewException("xdelta3.XDeltaDeltaTooBig", NULL, NULL);
+    Py_INCREF(XDeltaDeltaTooBig);
+    PyModule_AddObject(m, "error", XDeltaDeltaTooBig);
     return m;
 }

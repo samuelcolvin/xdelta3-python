@@ -12,8 +12,6 @@ setup(
                 ('SIZEOF_SIZE_T', '8'),
                 ('SIZEOF_UNSIGNED_LONG_LONG', '8'),
                 ('XD3_USE_LARGEFILE64', '1'),
-                ('XD3_DEBUG', '1'),
-                ('NDEBUG', '1'),
             ]
         )
     ]
