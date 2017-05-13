@@ -10,3 +10,4 @@ test.py
 htmlcov/
 *.so
 /*.txt
+/*.whl
