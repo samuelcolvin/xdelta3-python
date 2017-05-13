@@ -1,5 +1,3 @@
-import pytest
-
 import xdelta3
 
 
