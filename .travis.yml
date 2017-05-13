@@ -38,8 +38,6 @@ script:
 - make lint
 - make test
 - ./tests/check_tag.py
-- pip wheel .
-- for whl in ./*.whl; do auditwheel repair "$whl"; done
 #- docker run --rm -v `pwd`:/io $DOCKER_IMAGE /io/tests/build-wheels.sh TODO currently broken as gcc-5 isn't available on centos 5
 
 after_success:

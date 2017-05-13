@@ -18,12 +18,13 @@ setup(
     url='https://github.com/samuelcolvin/xdelta3',
     license='MIT',
     packages=['xdelta3'],
+    package_data={'xdelta3': ['_xdelta3.c', 'lib/*']},
     zip_safe=True,
     ext_modules=[
         Extension(
             '_xdelta3',
             sources=['xdelta3/_xdelta3.c'],
-            include_dirs=['./xdelta/xdelta3'],
+            include_dirs=['./xdelta3/lib'],
             define_macros=[
                 ('SIZEOF_SIZE_T', '8'),
                 ('SIZEOF_UNSIGNED_LONG_LONG', '8'),
