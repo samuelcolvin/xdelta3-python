@@ -13,6 +13,12 @@ matrix:
   allow_failures:
   - python: 'nightly'
 
+env:
+- DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+
+services:
+- docker
+
 addons:
   apt:
     sources:
@@ -23,6 +29,7 @@ addons:
 install:
 - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
 - gcc -v
+- docker pull $DOCKER_IMAGE
 - pip freeze
 - make install
 
@@ -30,9 +37,11 @@ script:
 - make lint
 - make test
 - ./tests/check_tag.py
+- docker run --rm -v `pwd`:/io $DOCKER_IMAGE /io/travis/build-wheels.sh
 
 after_success:
 - ls -lha
+- ls -lh wheelhouse/
 - bash <(curl -s https://codecov.io/bash)
 
 deploy:
