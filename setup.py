@@ -16,7 +16,7 @@ setup(
     author='Samuel Colvin',
     author_email='s@muelcolvin.com',
     url='https://github.com/samuelcolvin/xdelta3',
-    license='MIT',
+    license='Apache License, Version 2.0',
     packages=['xdelta3'],
     package_data={'xdelta3': ['_xdelta3.c', 'lib/*']},
     zip_safe=True,
@@ -34,12 +34,12 @@ setup(
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Environment :: Console',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: Unix',
         'Operating System :: POSIX :: Linux',
+        'Topic :: System :: Archiving :: Compression',
     ],
 )
