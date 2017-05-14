@@ -17,9 +17,9 @@ v1 = Path('shakespeare.txt').read_bytes()
 v2 = Path('shakespeare_changed.txt').read_bytes()
 
 times = []
-for i in range(10):
+for i in range(50):
     start = time()
-    delta = xdelta3.encode(v1, v2)
+    delta = xdelta3.encode(v1, v2, xdelta3.Flags.COMPLEVEL_1)
     v22 = xdelta3.decode(v1, delta)
     time_taken = (time() - start) * 1000
     times.append(time_taken)

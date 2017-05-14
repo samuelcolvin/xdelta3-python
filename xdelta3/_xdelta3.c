@@ -19,7 +19,6 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
   source_size = (size_t)source_len;
   input_size = (size_t)input_len;
 
-
   if (action == 0) {
     // if the output would be longer than the input itself, there's no point using delta encoding
     output_alloc = input_size;
@@ -59,30 +58,30 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 
 static PyMethodDef xdelta3_methods[] = {
   {"execute",  xdelta3_execute, METH_VARARGS, "xdelta3 encode or decode"},
-  {NULL, NULL, 0, NULL}    /* Sentinel */
+  {NULL, NULL, 0, NULL}
 };
 
 static struct PyModuleDef xdelta3_module = {
-   PyModuleDef_HEAD_INIT,
-   "xdelta3",   /* name of module */
-   "xdelta3", /* module documentation, may be NULL */
-   0,     /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
-   xdelta3_methods
+  PyModuleDef_HEAD_INIT,
+  "_xdelta3",
+  NULL,
+  0,
+  xdelta3_methods
 };
 
 PyMODINIT_FUNC PyInit__xdelta3(void) {
-    PyObject *m;
+  PyObject *m;
 
-    m = PyModule_Create(&xdelta3_module);
-    if (m == NULL)
-        return NULL;
+  m = PyModule_Create(&xdelta3_module);
+  if (m == NULL)
+    return NULL;
 
-    XDeltaError = PyErr_NewException("xdelta3.XDeltaError", NULL, NULL);
-    Py_INCREF(XDeltaError);
-    PyModule_AddObject(m, "XDeltaError", XDeltaError);
+  XDeltaError = PyErr_NewException("xdelta3.XDeltaError", NULL, NULL);
+  Py_INCREF(XDeltaError);
+  PyModule_AddObject(m, "XDeltaError", XDeltaError);
 
-    NoDeltaFound = PyErr_NewException("xdelta3.NoDeltaFound", NULL, NULL);
-    Py_INCREF(NoDeltaFound);
-    PyModule_AddObject(m, "NoDeltaFound", NoDeltaFound);
-    return m;
+  NoDeltaFound = PyErr_NewException("xdelta3.NoDeltaFound", NULL, NULL);
+  Py_INCREF(NoDeltaFound);
+  PyModule_AddObject(m, "NoDeltaFound", NoDeltaFound);
+  return m;
 }
