@@ -8,6 +8,11 @@ long_description = THIS_DIR.joinpath('README.rst').read_text()
 # avoid loading the package before requirements are installed:
 version = SourceFileLoader('version', 'xdelta3/version.py').load_module()
 
+package = THIS_DIR.joinpath('xdelta3')
+package_data = ['_xdelta3.c']
+if package.joinpath('lib').exists():
+    package_data += ['lib/' + f.name for f in package.joinpath('lib').iterdir()]
+
 setup(
     name='xdelta3',
     version=str(version.VERSION),
@@ -18,7 +23,9 @@ setup(
     url='https://github.com/samuelcolvin/xdelta3',
     license='Apache License, Version 2.0',
     packages=['xdelta3'],
-    package_data={'xdelta3': ['_xdelta3.c', 'lib/*']},
+    package_data={
+        'xdelta3': package_data
+    },
     zip_safe=True,
     ext_modules=[
         Extension(
