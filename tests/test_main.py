@@ -27,6 +27,7 @@ def test_readme():
     value_one = b'wonderful string to demonstrate xdelta3, much of these two strings is the same.'
     value_two = b'different string to demonstrate xdelta3, much of these two strings is the same.'
     delta = xdelta3.encode(value_one, value_two)
+    print(f'New string length: {len(value_two)}, delta length: {len(delta)}')
 
     value_two_rebuilt = xdelta3.decode(value_one, delta)
     assert value_two_rebuilt == value_two

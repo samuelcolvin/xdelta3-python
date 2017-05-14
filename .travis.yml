@@ -2,9 +2,6 @@ language: python
 
 cache: pip
 
-services:
-- postgresql
-
 python:
 - '3.5'
 - '3.6'
@@ -14,9 +11,8 @@ matrix:
   allow_failures:
   - python: 'nightly'
 
-env:
-- DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-
+#env:
+#- DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
 #services:
 #- docker
 
@@ -52,6 +48,7 @@ deploy:
     secure: Qrh0eve9uLknhDZ7q5DQaSNaL8gG/9bXaYAjJB3s9hMAXtTM+4zVBpke0Dl5Hziy0sWN304OSuAwHSzzBaZxChZ9mpaE7cuuEVNo5RZXNZJxbsHQLlTngV1w6khd7VhgmgG6QbYqoFXgpkB3p88bLxyAc4I2PbTVY4omeRCzKg8av20pu+C3mCN0e5dvE7u2CFDgd/s0V4fgt0Cjhw88sS/7fqsUZpbXy8J9Q+V1IP40CAmr8nXPEva4nSmTOFEyt6NOijWWizea5LvT9MJwK7tugM6BeH4IT1OaA58eRuOlDenaTDbhfOMQain/PTEWwr3KnYa8v6dvaVSU2uMEm2v+hVCYqQeFwAdFEJLY/bpl5kTRQ++dmvEPrWdU0cOf22vDzjfLLSHtWRQqtfp5BXpfL7jXV2IydUTjEmrybok7LxoRc7JhrfvlAScd6t2R/OQ1dyvav68ICkOfAu660h9ETa0wsq917wIj9kErz4Gj+ItLwHsRkCwoEKpk3Xa+FkUkuEMoD/gmPB93R5fpSldc0ZCNXzNPcWJcBWxQpvlhXs/lhdl5gG15BUzDYQbWsK7XaGn8wV+cHNODee4VE/vKUTlo/xNWkxmWMWzQS7t+yZhmorN69Xd4wGcvT2Bed/9Q/bc154G2da+ps89cWVkRgY2lYrYXcu1FM7O9KMs=
   distributions: sdist bdist_wheel
   skip_upload_docs: true
+  skip_cleanup: true
   on:
     tags: true
     python: 3.6
