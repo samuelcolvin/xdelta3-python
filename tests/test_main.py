@@ -52,6 +52,11 @@ def test_different_compression():
     assert len(delta_a) < len(delta_b)
 
 
+def test_version():
+    # can't easily test output as capsys doesn't capture output of print_version
+    xdelta3.print_version()
+
+
 def test_readme():
     value_one = b'wonderful string to demonstrate xdelta3, much of these two strings is the same.'
     value_two = b'different string to demonstrate xdelta3, much of these two strings is the same.'

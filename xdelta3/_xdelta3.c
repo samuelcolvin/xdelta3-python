@@ -56,8 +56,16 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
   return NULL;
 }
 
+static PyObject * xdelta3_version(PyObject *self, PyObject *args)
+{
+  int result = main_version();
+  PyObject *ret = Py_BuildValue("i", result);
+  return ret;
+}
+
 static PyMethodDef xdelta3_methods[] = {
   {"execute",  xdelta3_execute, METH_VARARGS, "xdelta3 encode or decode"},
+  {"version",  xdelta3_version, METH_VARARGS, "print xdelta3 version info"},
   {NULL, NULL, 0, NULL}
 };
 
