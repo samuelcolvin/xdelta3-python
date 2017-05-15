@@ -20,7 +20,7 @@ setup(
     long_description=long_description,
     author='Samuel Colvin',
     author_email='s@muelcolvin.com',
-    url='https://github.com/samuelcolvin/xdelta3',
+    url='https://github.com/samuelcolvin/xdelta3-python',
     license='Apache License, Version 2.0',
     packages=['xdelta3'],
     package_data={
@@ -43,6 +43,7 @@ setup(
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: Unix',
