@@ -27,11 +27,14 @@ Usage
     value_one = b'wonderful string to demonstrate xdelta3, much of these two strings is the same.'
     value_two = b'different string to demonstrate xdelta3, much of these two strings is the same.'
     delta = xdelta3.encode(value_one, value_two)
+    # delta is an unreadable byte string: b'\xd6\xc3 ... \x01different\n\x13F\x00'
 
     print(f'New string length: {len(value_two)}, delta length: {len(delta)}')
     value_two_rebuilt = xdelta3.decode(value_one, delta)
     if value_two_rebuilt == value_two:
         print('Boo Ya! Delta encoding successful.')
+
+*(with xdelta3 installed this code should run "as is", just copy it into ipython or a file and run)*
 
 How fast?
 ---------
