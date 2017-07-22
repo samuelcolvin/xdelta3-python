@@ -32,10 +32,15 @@ setup(
             '_xdelta3',
             sources=['xdelta3/_xdelta3.c'],
             include_dirs=['./xdelta3/lib'],
+            # use with SECONDARY_LZMA to enabled secondary compression with lzma
+            # libraries=['lzma'],
             define_macros=[
                 ('SIZEOF_SIZE_T', '8'),
                 ('SIZEOF_UNSIGNED_LONG_LONG', '8'),
                 ('XD3_USE_LARGEFILE64', '1'),
+                # ('SECONDARY_LZMA', '1'),
+                # adds verbose debug output to xdelta3
+                # ('XD3_DEBUG', '3'),
             ]
         )
     ],

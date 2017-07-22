@@ -24,7 +24,7 @@ lint:
 	pytest xdelta3 -p no:sugar -q
 
 .PHONY: test
-test: prepare
+test: install
 	pytest --cov=xdelta3
 
 .PHONY: quickbuild
