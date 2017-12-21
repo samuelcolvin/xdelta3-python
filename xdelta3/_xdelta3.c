@@ -27,7 +27,7 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
         output_buf, &output_size, output_alloc, flags);
   } else {
     // output shouldn't be bigger than the original plus the delta, but give a little leeway
-    output_alloc = input_size + source_size * 11 / 10;
+    output_alloc = input_size + source_size * 2;
     output_buf = main_malloc(output_alloc);
     result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
         output_buf, &output_size, output_alloc, flags);

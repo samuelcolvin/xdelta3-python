@@ -13,3 +13,5 @@ htmlcov/
 /*.txt
 /*.whl
 /xdelta3/lib/
+/tests/b1.bin
+/tests/b2.bin

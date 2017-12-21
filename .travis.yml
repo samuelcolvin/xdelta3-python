@@ -28,6 +28,7 @@ install:
 - gcc -v
 #- docker pull $DOCKER_IMAGE
 - pip freeze
+- make download-test-files
 
 script:
 - make test

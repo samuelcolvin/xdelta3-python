@@ -23,6 +23,15 @@ lint:
 	flake8 xdelta3/ tests/
 	pytest xdelta3 -p no:sugar -q
 
+.PHONY: download-test-files
+download-test-files:
+	curl -sL https://github.com/samuelcolvin/xdelta3-python/files/1579377/files.zip > test_html.zip
+	echo "52bf4ee680a86afdeed9aad30e7d68fa  test_html.zip" > test_html.zip.md5
+	md5sum -c test_html.zip.md5
+	unzip -o test_html.zip
+	mv b1.bin b2.bin tests
+	rm test_html.zip test_html.zip.md5
+
 .PHONY: test
 test: install
 	pytest --cov=xdelta3

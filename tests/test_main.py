@@ -1,6 +1,7 @@
 import base64
 import os
 import string
+from pathlib import Path
 
 import pytest
 
@@ -64,3 +65,16 @@ def test_readme():
 
     value_two_rebuilt = xdelta3.decode(value_one, delta)
     assert value_two_rebuilt == value_two
+
+
+def test_large_decode():
+    this_dir = Path(__file__).parent
+    try:
+        b1 = (this_dir / 'b1.bin').read_bytes()
+        b2 = (this_dir / 'b2.bin').read_bytes()
+    except FileNotFoundError as e:
+        raise RuntimeError('file required for test not found, run `make download-test-files`') from e
+
+    d = xdelta3.encode(b1, b2)
+    b3 = xdelta3.decode(b1, d)
+    assert b2 == b3
