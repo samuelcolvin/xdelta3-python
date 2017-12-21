@@ -2,12 +2,11 @@ import sys
 from enum import IntEnum
 
 import _xdelta3
-from _xdelta3 import NoDeltaFound, XDeltaError  # noqa
+from _xdelta3 import XDeltaError  # noqa
 
 from .version import VERSION
 
 __all__ = [
-    'NoDeltaFound',
     'XDeltaError',
     'Flags',
     'encode',

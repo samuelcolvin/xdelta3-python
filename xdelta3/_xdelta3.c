@@ -7,7 +7,7 @@
 static PyObject *NoDeltaFound;
 static PyObject *XDeltaError;
 
-static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
+static PyObject * _xdelta3_execute(PyObject *self, PyObject *args, int buffer_double_cnt)
 {
   uint8_t *input_bytes = NULL, *source_bytes = NULL, *output_buf = NULL;
   int input_len, source_len, flags, action, result;
@@ -21,13 +21,13 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 
   if (action == 0) {
     // if the output would be longer than the input itself, there's no point using delta encoding
-    output_alloc = input_size;
+    output_alloc = input_size << buffer_double_cnt;
     output_buf = main_malloc(output_alloc);
     result = xd3_encode_memory(input_bytes, input_size, source_bytes, source_size,
         output_buf, &output_size, output_alloc, flags);
   } else {
     // output shouldn't be bigger than the original plus the delta, but give a little leeway
-    output_alloc = input_size + source_size * 11 / 10;
+    output_alloc = (input_size + source_size * 11 / 10) << buffer_double_cnt;
     output_buf = main_malloc(output_alloc);
     result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
         output_buf, &output_size, output_alloc, flags);
@@ -39,21 +39,29 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
     return ret;
   }
 
-  if(result == ENOSPC) {
-    if (action == 0) {
-      // all is well, just not efficient delta could be found
-      PyErr_SetString(NoDeltaFound, "No delta found shorter than the input value");
-    } else {
+  if (result == ENOSPC) {
+    // Leave some leeway before we overflow int. This is a bad way, the better way would be to
+    // check above when we left shift.
+    if (buffer_double_cnt < sizeof(int) - 4) {
       PyErr_SetString(XDeltaError, "Output of decoding delta longer than expected");
+    } else {
+      main_free(output_buf);
+      return _xdelta3_execute(self, args, buffer_double_cnt + 1);
     }
   } else {
     char exc_str[80];
-    sprintf(exc_str, "Error occur executing xdelta3: %s", xd3_strerror(result));
+    snprintf(exc_str, sizeof(exc_str) / sizeof(exc_str[0]),
+      "Error occurred executing xdelta3: %s", xd3_strerror(result));
     PyErr_SetString(XDeltaError, exc_str);
 
   }
   main_free(output_buf);
   return NULL;
+}
+
+static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
+{
+  return _xdelta3_execute(self, args, 1);
 }
 
 static PyObject * xdelta3_version(PyObject *self, PyObject *args)
@@ -88,8 +96,5 @@ PyMODINIT_FUNC PyInit__xdelta3(void) {
   Py_INCREF(XDeltaError);
   PyModule_AddObject(m, "XDeltaError", XDeltaError);
 
-  NoDeltaFound = PyErr_NewException("xdelta3.NoDeltaFound", NULL, NULL);
-  Py_INCREF(NoDeltaFound);
-  PyModule_AddObject(m, "NoDeltaFound", NoDeltaFound);
   return m;
 }
