@@ -32,12 +32,6 @@ def test_decode_error():
     assert exc_info.value.args[0] == 'Error occur executing xdelta3: XD3_INVALID_INPUT'
 
 
-def test_no_delta():
-    with pytest.raises(xdelta3.NoDeltaFound) as exc_info:
-        xdelta3.encode(b'hello', b'goodbye')
-    assert exc_info.value.args[0] == 'No delta found shorter than the input value'
-
-
 def test_different_compression():
     all_ascii = (string.ascii_letters + string.digits).encode()
     v1 = all_ascii * 1000
@@ -55,6 +49,14 @@ def test_different_compression():
 def test_version():
     # can't easily test output as capsys doesn't capture output of print_version
     xdelta3.print_version()
+
+
+def test_huge_output():
+    b1 = b''
+    b2 = b't' * 10000  # 10K same characters
+    d = xdelta3.encode(b1, b2)
+    assert len(d) < 100  # 0 bytes + very small delta = big output
+    assert xdelta3.decode(b1, d) == b2
 
 
 def test_readme():
