@@ -29,7 +29,7 @@ def test_long_random():
 def test_decode_error():
     with pytest.raises(xdelta3.XDeltaError) as exc_info:
         xdelta3.decode(expected_delta, value_one)
-    assert exc_info.value.args[0] == 'Error occur executing xdelta3: XD3_INVALID_INPUT'
+    assert exc_info.value.args[0] == 'Error occurred executing xdelta3: XD3_INVALID_INPUT'
 
 
 def test_different_compression():
