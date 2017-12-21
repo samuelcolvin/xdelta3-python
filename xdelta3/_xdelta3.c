@@ -27,10 +27,16 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
         output_buf, &output_size, output_alloc, flags);
   } else {
     // output shouldn't be bigger than the original plus the delta, but give a little leeway
-    output_alloc = input_size + source_size * 11 / 10;
-    output_buf = main_malloc(output_alloc);
-    result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
-        output_buf, &output_size, output_alloc, flags);
+    output_alloc = input_size + source_size;
+    while (1) {
+      output_buf = main_malloc(output_alloc);
+      result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
+          output_buf, &output_size, output_alloc, flags);
+      if (result != ENOSPC) {
+        break;
+      }
+      output_alloc = output_alloc * 2;
+    }
   }
 
   if (result == 0) {
@@ -40,12 +46,8 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
   }
 
   if(result == ENOSPC) {
-    if (action == 0) {
-      // all is well, just not efficient delta could be found
-      PyErr_SetString(NoDeltaFound, "No delta found shorter than the input value");
-    } else {
-      PyErr_SetString(XDeltaError, "Output of decoding delta longer than expected");
-    }
+    // all is well, just no efficient delta could be found
+    PyErr_SetString(NoDeltaFound, "No delta found shorter than the input value");
   } else {
     char exc_str[80];
     sprintf(exc_str, "Error occur executing xdelta3: %s", xd3_strerror(result));
