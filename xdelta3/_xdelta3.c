@@ -2,6 +2,7 @@
 
 #include "xdelta3.h"
 #include "xdelta3.c"
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 static PyObject *NoDeltaFound;
@@ -10,8 +11,9 @@ static PyObject *XDeltaError;
 static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 {
   uint8_t *input_bytes = NULL, *source_bytes = NULL, *output_buf = NULL;
-  int input_len, source_len, flags, action, result;
-  size_t input_size, source_size, output_alloc, output_size;
+  Py_ssize_t input_len, source_len, output_size;
+  int flags, action, result;
+  size_t input_size, source_size, output_alloc;
 
   if (!PyArg_ParseTuple(args, "y#y#ii", &input_bytes, &input_len, &source_bytes, &source_len, &flags, &action))
     return NULL;
