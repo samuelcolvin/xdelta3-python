@@ -11,8 +11,8 @@ static PyObject *XDeltaError;
 static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
 {
   uint8_t *input_bytes = NULL, *source_bytes = NULL, *output_buf = NULL;
-  Py_ssize_t input_len;
-  int source_len, flags, action, result;
+  Py_ssize_t source_len, input_len;
+  int flags, action, result;
   Py_ssize_t output_size;
   size_t input_size, source_size, output_alloc;
 
